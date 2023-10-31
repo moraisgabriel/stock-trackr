@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.testsoftware.stocktrackr.Models.Product;
 
 @SpringBootTest
-class StocktrackrApplicationTests {
+class ProductTests {
 
 	@Test
 	void test_createProductAndVerifyPrice() {
@@ -16,5 +16,14 @@ class StocktrackrApplicationTests {
 
 		assertEquals("Test product", product.getName());
 		assertEquals(19.90, product.getPrice());
+	}
+
+	@Test
+	void test_updateQuantityInStock() {
+		Product product = new Product(1, "Test product", "Description", 19.90, 100);
+
+		product.updateQuantityStock(50);
+
+		assertEquals(50, product.getQuantity());
 	}
 }

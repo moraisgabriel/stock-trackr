@@ -22,4 +22,8 @@ public class Product {
     private double price;
 
     private int quantity;
+
+    public void updateQuantityStock(int newQuantity) {
+        this.quantity = newQuantity;
+    }
 }
