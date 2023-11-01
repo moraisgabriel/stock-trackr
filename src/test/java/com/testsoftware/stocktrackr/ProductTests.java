@@ -2,6 +2,7 @@ package com.testsoftware.stocktrackr;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,4 +75,10 @@ class ProductTests {
 		assertEquals(0, product.getQuantity());
 	}
 
+	@Test
+	void test_createProductWithTax() {
+		Product product = Product.createProduct("Test product", "Description", 19.90, 0, 0.05);
+
+		assertNotNull(product.getTax());
+	}
 }

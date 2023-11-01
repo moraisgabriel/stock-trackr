@@ -1,19 +1,13 @@
 package com.testsoftware.stocktrackr.Models;
 
-import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name = "products")
-@Table(name = "products")
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
-    @Column(unique = true)
+    private Long id;
+
     private String name;
 
     private String description;
@@ -22,8 +16,12 @@ public class Product {
 
     private int quantity;
 
-    private Product(int id, String name, String desc, double price, int quantity) {
-        this.id = id;
+    // initiate tax using 0.00 notation so if is 5%
+    // should be initiate as 0.05%
+    // in order to make it work the functions that uses it.
+    private double tax;
+
+    private Product(String name, String desc, double price, int quantity) {
         this.name = name;
         this.description = desc;
         this.price = price;
@@ -46,7 +44,17 @@ public class Product {
             return null;
         }
 
-        return new Product(1, name, desc, price, quantity);
+        return new Product(name, desc, price, quantity);
+    }
+
+    public static Product createProduct(String name, String desc, double price, int quantity, double tax) {
+        Product product = createProduct(name, desc, price, quantity);
+        product.tax = tax;
+        return product;
+    }
+
+    public double calculateTax() {
+        return price * (1 + tax);
     }
 
     public void updateQuantityStock(int newQuantity) {
