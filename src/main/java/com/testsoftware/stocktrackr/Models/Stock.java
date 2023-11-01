@@ -1,24 +1,27 @@
 package com.testsoftware.stocktrackr.Models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import lombok.*;
 
 @Getter
 @Setter
 public class Stock {
-    private List<Product> products;
-
-    public Stock() {
-        this.products = new ArrayList<Product>();
-    }
+    private List<Product> products = new ArrayList<Product>();
+    private double totalPrice = 0.0;
+    private int totalQuantity = 0;
 
     public void addProduct(Product product) {
         if (product == null)
             return;
 
         this.products.add(product);
+        this.totalPrice += product.getQuantity() * product.getPrice();
+        this.totalQuantity += product.getQuantity();
+    }
+
+    public boolean removeProduct(String productName) {
+        return updateProductQuantity(productName, 0);
     }
 
     public Product getProductByName(String name) {
@@ -28,24 +31,6 @@ public class Stock {
         }
 
         return null;
-    }
-
-    public double getTotalPrice() {
-        int sum = 0;
-        for (Product product : products) {
-            sum += product.getQuantity() * product.getPrice();
-        }
-
-        return sum;
-    }
-
-    public int getTotalQuantity() {
-        int sum = 0;
-        for (Product product : products) {
-            sum += product.getQuantity();
-        }
-
-        return sum;
     }
 
     public boolean updateProductQuantity(String productName, int newQuantity) {
@@ -58,5 +43,11 @@ public class Stock {
         }
 
         return true;
+    }
+
+    public boolean checkIfProductQuantityIsEnough(String productName, int quantity) {
+        Product product = getProductByName(productName);
+
+        return quantity <= product.getQuantity();
     }
 }

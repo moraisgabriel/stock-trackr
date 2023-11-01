@@ -1,7 +1,7 @@
 package com.testsoftware.stocktrackr;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
@@ -10,10 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.testsoftware.stocktrackr.Models.Product;
 
 @SpringBootTest
-class ProductTests {
+public class ProductTests {
 
 	@Test
-	void test_createProductAndVerifyPrice() {
+	void test_createProductAndVerifyPrice() throws Exception {
 		Product product = Product.createProduct("Test product", "Description", 19.90, 100);
 
 		assertEquals("Test product", product.getName());
@@ -21,35 +21,35 @@ class ProductTests {
 	}
 
 	@Test
-	void test_createProductWithPriceNegative() {
-		Product product = Product.createProduct("Test product", "Description", -10, 100);
-
-		assertNull(product);
+	void test_createProductWithPriceNegative() throws Exception {
+		assertThrows(Exception.class, () -> {
+			Product.createProduct("Test product", "Description", -10, 100);
+        });
 	}
 
 	@Test
 	void test_createProductWithPriceZero() {
-		Product product = Product.createProduct("Test product", "Description", 0, 100);
-
-		assertNull(product);
+		assertThrows(Exception.class, () -> {
+			Product.createProduct("Test product", "Description", 0, 100);
+        });
 	}
 
 	@Test
 	void test_createProductWithEmptyName() {
-		Product product = Product.createProduct("Test product", "Description", 0, 100);
-
-		assertNull(product);
+		assertThrows(Exception.class, () -> {
+			Product.createProduct("", "Description", 50.99, 100);
+        });
 	}
 
 	@Test
-	void test_createProductWithNegativeQuantity() {
-		Product product = Product.createProduct("Test product", "Description", 19.90, -10);
-
-		assertNull(product);
+	void test_createProductWithNegativeQuantity() throws Exception {
+		assertThrows(Exception.class, () -> {
+			Product.createProduct("Test product", "Description", 19.90, -10);
+        });
 	}
 
 	@Test
-	void test_updateQuantityInStock() {
+	void test_updateQuantityInStock() throws Exception {
 		Product product = Product.createProduct("Test product", "Description", 19.90, 100);
 
 		product.updateQuantityStock(50);
@@ -58,7 +58,7 @@ class ProductTests {
 	}
 
 	@Test
-	void test_updateQuantityWithNegativeValue() {
+	void test_updateQuantityWithNegativeValue() throws Exception {
 		Product product = Product.createProduct("Test product", "Description", 19.90, 100);
 
 		product.updateQuantityStock(-10);
@@ -67,10 +67,21 @@ class ProductTests {
 	}
 
 	@Test
-	void test_updateQuantityWithQuantityZeroAndValueNegative() {
+	void test_updateQuantityWithQuantityZero() throws Exception {
 		Product product = Product.createProduct("Test product", "Description", 19.90, 0);
 
-		product.updateQuantityStock(-10);
+		product.updateQuantityStock(10);
+
+		assertEquals(10, product.getQuantity());
+	}
+
+	@Test
+	void test_updateQuantityWithQuantityZeroAndValueNegative() throws Exception {
+		Product product = Product.createProduct("Test product", "Description", 19.90, 0);
+
+		assertThrows(Exception.class, () -> {
+			product.updateQuantityStock(-10);
+        });
 
 		assertEquals(0, product.getQuantity());
 	}
@@ -80,5 +91,19 @@ class ProductTests {
 		Product product = Product.createProduct("Test product", "Description", 19.90, 0, 0.05);
 
 		assertNotNull(product.getTax());
+	}
+
+	@Test
+	void test_createProductWithTaxNegative() {
+		Product product = Product.createProduct("Test product", "Description", 19.90, 0, -0.5);
+
+		assertEquals(0, product.getTax());
+	}
+
+	@Test
+	void test_getPriceWithTax() {
+		Product product = Product.createProduct("Test product", "Description", 10, 0, 0.5);
+
+		assertEquals(15, product.calculatePriceWithTax());
 	}
 }

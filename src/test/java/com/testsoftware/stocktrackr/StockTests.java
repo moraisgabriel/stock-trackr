@@ -6,40 +6,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.testsoftware.stocktrackr.Models.Product;
-import com.testsoftware.stocktrackr.Models.Stock;
+import com.testsoftware.stocktrackr.Models.*;
 
+@SpringBootTest
 public class StockTests {
+
+    private Stock stock = new Stock();
 
     @Test
     public void test_createEmptyStock() {
-        Stock stock = new Stock();
         assertTrue(stock.getProducts().isEmpty());
     }
 
     @Test
     public void test_addProductToStock() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, 100));
+        stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
 
         assertEquals(1, stock.getProducts().size());
     }
 
     @Test
     public void test_addTwoMoreProductsToStock() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, 100));
-        stock.addProduct(Product.createProduct("Product1", "", 10, 100));
-        stock.addProduct(Product.createProduct("Product2", "", 10, 100));
+        stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
+        stock.addProduct(Product.createProduct("Product1", "", 10, 100, 0));
+        stock.addProduct(Product.createProduct("Product2", "", 10, 100, 0));
 
         assertEquals(3, stock.getProducts().size());
     }
 
     @Test
     public void test_getProductFromStock() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, 100));
+        stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
 
         Product product = stock.getProductByName("Product");
 
@@ -48,8 +47,7 @@ public class StockTests {
 
     @Test
     public void test_getProductNotFound() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, 100));
+        stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
 
         Product product = stock.getProductByName("Test");
 
@@ -58,10 +56,9 @@ public class StockTests {
 
     @Test
     public void test_getStockTotalPrice() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 5, 20));
-        stock.addProduct(Product.createProduct("Product1", "", 10, 100));
-        stock.addProduct(Product.createProduct("Product2", "", 20, 70));
+        stock.addProduct(Product.createProduct("Product", "", 5, 20, 0));
+        stock.addProduct(Product.createProduct("Product1", "", 10, 100, 0));
+        stock.addProduct(Product.createProduct("Product2", "", 20, 70, 0));
 
         double totalPrice = stock.getTotalPrice();
 
@@ -70,10 +67,9 @@ public class StockTests {
 
     @Test
     public void test_getStockTotalQuantity() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 5, 20));
-        stock.addProduct(Product.createProduct("Product1", "", 10, 100));
-        stock.addProduct(Product.createProduct("Product2", "", 20, 70));
+        stock.addProduct(Product.createProduct("Product", "", 5, 20, 0));
+        stock.addProduct(Product.createProduct("Product1", "", 10, 100, 0));
+        stock.addProduct(Product.createProduct("Product2", "", 20, 70, 0));
 
         int totalQuantity = stock.getTotalQuantity();
 
@@ -82,24 +78,21 @@ public class StockTests {
 
     @Test
     public void test_insertInvalidProductPrice() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", -10, 20));
+        stock.addProduct(Product.createProduct("Product", "", -10, 20, 0));
 
         assertTrue(stock.getProducts().isEmpty());
     }
 
     @Test
     public void test_insertInvalidProductQuantity() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, -5));
+        stock.addProduct(Product.createProduct("Product", "", 10, -5, 0));
 
         assertTrue(stock.getProducts().isEmpty());
     }
 
     @Test
     public void test_updateQuantityProductFromStock() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, 20));
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean updated = stock.updateProductQuantity("Product", 10);
 
@@ -111,8 +104,7 @@ public class StockTests {
 
     @Test
     public void test_updateNegativeQuantityProductFromStock() {
-        Stock stock = new Stock();
-        stock.addProduct(Product.createProduct("Product", "", 10, 20));
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean updated = stock.updateProductQuantity("Product", -10);
 
@@ -120,5 +112,56 @@ public class StockTests {
 
         assertFalse(updated);
         assertEquals(20, product.getQuantity());
+    }
+
+    @Test
+    public void test_removeProductFromStock() {
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+
+        boolean updated = stock.removeProduct("Product");
+
+        Product product = stock.getProductByName("Product");
+
+        assertTrue(updated);
+        assertEquals(0, product.getQuantity());
+    }
+
+    @Test
+    public void test_removeInexistentProductFromStock() {
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+
+        boolean updated = stock.removeProduct("ProductTest");
+
+        Product product = stock.getProductByName("Product");
+
+        assertTrue(updated);
+        assertEquals(20, product.getQuantity());
+    }
+
+    @Test
+    public void test_checkProductQuantityInStock() {
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+
+        boolean result = stock.checkIfProductQuantityIsEnough("Product", 10);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void test_checkProductQuantityNotInStock() {
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+
+        boolean result = stock.checkIfProductQuantityIsEnough("Product", 30);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void test_checkProductQuantityInStockIsEqual() {
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+
+        boolean result = stock.checkIfProductQuantityIsEnough("Product", 20);
+
+        assertTrue(result);
     }
 }
