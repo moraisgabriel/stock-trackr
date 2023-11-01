@@ -18,12 +18,15 @@ public class Sale {
         this.stock = stock;
     }
 
-    public void addSaleProduct(Product product, int quantity) throws Exception {
-        if(product == null)
+    public void addSaleProduct(String productName, int quantity) throws Exception {
+        if(productName.isEmpty())
             throw new Exception("Product not valid!");
+            
+        Product product = stock.getProductByName(productName);
+        if(product == null)
+            throw new Exception("Product not exist!");
 
-        boolean isQuantityEnough = stock.checkIfProductQuantityIsEnough(product.getName(), quantity);
-
+        boolean isQuantityEnough = stock.checkIfProductQuantityIsEnough(productName, quantity);
         if(!isQuantityEnough)
             throw new Exception("Quantity of product in stock is not enough!");
 
@@ -55,7 +58,10 @@ public class Sale {
         this.change = calculateChange(paymentValue, paymentType);
         this.date = new Date();
 
-        // UPDATE STOCK
+        this.products.forEach((product, quantity) -> {
+            int newQuantity = product.getQuantity() - quantity;
+            stock.updateProductQuantity(product.getName(), newQuantity);
+        });
 
         return this.sold = true;
     }

@@ -1,9 +1,6 @@
 package com.testsoftware.stocktrackr;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,14 +18,14 @@ public class StockTests {
     }
 
     @Test
-    public void test_addProductToStock() {
+    public void test_addProductToStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
 
         assertEquals(1, stock.getProducts().size());
     }
 
     @Test
-    public void test_addTwoMoreProductsToStock() {
+    public void test_addTwoMoreProductsToStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
         stock.addProduct(Product.createProduct("Product1", "", 10, 100, 0));
         stock.addProduct(Product.createProduct("Product2", "", 10, 100, 0));
@@ -37,7 +34,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_getProductFromStock() {
+    public void test_getProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
 
         Product product = stock.getProductByName("Product");
@@ -46,7 +43,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_getProductNotFound() {
+    public void test_getProductNotFound() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 100, 0));
 
         Product product = stock.getProductByName("Test");
@@ -55,7 +52,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_getStockTotalPrice() {
+    public void test_getStockTotalPrice() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 5, 20, 0));
         stock.addProduct(Product.createProduct("Product1", "", 10, 100, 0));
         stock.addProduct(Product.createProduct("Product2", "", 20, 70, 0));
@@ -66,7 +63,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_getStockTotalQuantity() {
+    public void test_getStockTotalQuantity() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 5, 20, 0));
         stock.addProduct(Product.createProduct("Product1", "", 10, 100, 0));
         stock.addProduct(Product.createProduct("Product2", "", 20, 70, 0));
@@ -77,21 +74,21 @@ public class StockTests {
     }
 
     @Test
-    public void test_insertInvalidProductPrice() {
+    public void test_insertInvalidProductPrice() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", -10, 20, 0));
 
         assertTrue(stock.getProducts().isEmpty());
     }
 
     @Test
-    public void test_insertInvalidProductQuantity() {
+    public void test_insertInvalidProductQuantity() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, -5, 0));
 
         assertTrue(stock.getProducts().isEmpty());
     }
 
     @Test
-    public void test_updateQuantityProductFromStock() {
+    public void test_updateQuantityProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean updated = stock.updateProductQuantity("Product", 10);
@@ -103,7 +100,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_updateNegativeQuantityProductFromStock() {
+    public void test_updateNegativeQuantityProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean updated = stock.updateProductQuantity("Product", -10);
@@ -115,7 +112,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_removeProductFromStock() {
+    public void test_removeProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean updated = stock.removeProduct("Product");
@@ -127,7 +124,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_removeInexistentProductFromStock() {
+    public void test_removeInexistentProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean updated = stock.removeProduct("ProductTest");
@@ -139,7 +136,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_checkProductQuantityInStock() {
+    public void test_checkProductQuantityInStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean result = stock.checkIfProductQuantityIsEnough("Product", 10);
@@ -148,7 +145,7 @@ public class StockTests {
     }
 
     @Test
-    public void test_checkProductQuantityNotInStock() {
+    public void test_checkProductQuantityNotInStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean result = stock.checkIfProductQuantityIsEnough("Product", 30);
@@ -157,11 +154,22 @@ public class StockTests {
     }
 
     @Test
-    public void test_checkProductQuantityInStockIsEqual() {
+    public void test_checkProductQuantityInStockIsEqual() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
         boolean result = stock.checkIfProductQuantityIsEnough("Product", 20);
 
         assertTrue(result);
+    }
+
+    @Test
+    public void test_insertProductThatAlreadyExists() throws Exception {
+        stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+
+        assertThrows(Exception.class, () -> {  
+            stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
+        });
+
+        assertEquals(1, stock.getProducts().size());
     }
 }

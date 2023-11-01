@@ -11,13 +11,25 @@ public class Stock {
     private double totalPrice = 0.0;
     private int totalQuantity = 0;
 
-    public void addProduct(Product product) {
+    public void addProduct(Product product) throws Exception {
         if (product == null)
             return;
+        
+        if(checkIfProductAlreadyExists(product.getName()))
+            throw new Exception("Product already exists in stock!");
 
         this.products.add(product);
         this.totalPrice += product.getQuantity() * product.getPrice();
         this.totalQuantity += product.getQuantity();
+    }
+
+    public boolean checkIfProductAlreadyExists(String productName) {
+        for (Product product : products) {
+            if(productName.equals(product.getName()))
+                return true;
+        }
+
+        return false;
     }
 
     public boolean removeProduct(String productName) {
