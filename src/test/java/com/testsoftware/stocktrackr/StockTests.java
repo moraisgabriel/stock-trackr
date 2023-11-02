@@ -115,7 +115,7 @@ public class StockTests {
     public void test_removeProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
-        boolean updated = stock.removeProduct("Product");
+        boolean updated = stock.removeProductQuantityFromStock("Product");
 
         Product product = stock.getProductByName("Product");
 
@@ -127,7 +127,7 @@ public class StockTests {
     public void test_removeInexistentProductFromStock() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
-        boolean updated = stock.removeProduct("ProductTest");
+        boolean updated = stock.removeProductQuantityFromStock("ProductTest");
 
         Product product = stock.getProductByName("Product");
 
@@ -166,7 +166,7 @@ public class StockTests {
     public void test_insertProductThatAlreadyExists() throws Exception {
         stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
 
-        assertThrows(Exception.class, () -> {  
+        assertThrows(Exception.class, () -> {
             stock.addProduct(Product.createProduct("Product", "", 10, 20, 0));
         });
 

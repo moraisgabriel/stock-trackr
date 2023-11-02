@@ -6,8 +6,6 @@ import lombok.*;
 @Setter
 public class Product {
 
-    private Long id;
-
     private String name;
 
     private String description;
@@ -43,14 +41,13 @@ public class Product {
 
     public static Product createProduct(String name, String desc, double price, int quantity, double tax) {
         try {
-            if(tax < 0)
+            if (tax < 0)
                 tax = 0;
 
             Product product = createProduct(name, desc, price, quantity);
             product.tax = tax;
             return product;
-        } 
-        catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
