@@ -10,6 +10,7 @@ import com.testsoftware.stocktrackr.Models.*;
 
 @RestController()
 @RequestMapping("/stock")
+@CrossOrigin(origins = "http://localhost:4200")
 public class StockController {
 
     private Stock stock = new Stock();

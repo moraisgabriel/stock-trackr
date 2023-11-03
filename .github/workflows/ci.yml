@@ -15,8 +15,11 @@ on:
     branches: [ "main" ]
 
 jobs:
-  BuildAndTest:
+  BuildAndTestJava:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: /java-backend
 
     steps:
     - uses: actions/checkout@v3
@@ -30,5 +33,20 @@ jobs:
         
     - name: Build with Maven and Run Tests
       run: mvn -B package --file pom.xml
+  
+  BuildAndTestAngular:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: /angular-frontend
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install npm packages
+      run: npm ci
+    
+    - name: Run Build
+      run: npm run build
 
     
